@@ -1,0 +1,58 @@
+<html>
+<head> 
+<title> albums info</title>
+
+
+</head>
+<body>
+
+<h2>Albums Information</h2>
+<table border=1>
+<tr>
+<th>Albums title</th>
+<th>Artist names</th>
+<th>Songs</th>
+<th>Release date</th>
+</tr>
+
+<tr>
+<td>Varsham</td>
+<td>sobhan</td>
+<td>Mellagaa,Nizam Pori,Langa Voni,Neeti Mullai,Kopama,Joole Joole</td>
+<td>2004</td>
+</tr>
+
+<tr>
+<td>Arya-2</td>
+<td>sukumar</td>
+<td>Mr. Perfect,Uppenantha,Baby He Loves You,Ringa Ringa,Karige Loga,My Love Is Gone,Karige Loga </td>
+<td>2009</td>
+</tr>
+
+<tr>
+<td>pushpa</td>
+<td>Sukumar</td>
+<td>Daakko Daakko Meka,Srivalli,Oo Antava Oo Oo Antava,Saami Saami,Eyy Bidda Idhi Naa Adda</td>
+<td>2021</td>
+</tr>
+
+<tr>
+<td>Ninnu Kori</td>
+<td>sid sriram</td>
+<td>Adiga Adiga,Unnatundi Gundey,Once Upon A Time Lo,Ninnu Kori Tittle Song,Hey Badhulu Cheppavey</td>
+<td>2017</td>
+</tr>
+
+<tr>
+<td>Geetha Govindam</td>
+<td>sid sriram</td>
+<td>Inkem Inkem,What the Life,Vachindamma,Yenti Yenti,Kanureppala Kaalam</td>
+<td>2018</td>
+</tr>
+
+</table>
+</body>
+
+
+</html>
+
