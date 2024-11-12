@@ -1,0 +1,221 @@
+---
+title: "project"
+author: "Sirapu Nandini"
+date: "2024-11-04"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+options(repos = c(CRAN = "https://cran.r-project.org"))
+
+```
+
+
+```{r}
+# path to downloaded dataset file
+#Data loading 
+url <- "https://raw.githubusercontent.com/srirapunandini/dav---5400/refs/heads/main/StudentPerformanceFactors%20(2).csv"
+
+# Reading the CSV file into R
+project_data <- read.csv(url)
+project_data
+
+```
+Consists of 6,607 rows and 20 columns.
+
+
+```{r}
+# View summary statistics of the dataset
+summary(project_data)
+```
+
+```{r}
+#plots for the variables (numerical and categorical)
+library(ggplot2)
+
+# Loop through each variable and create plots
+for (var in names(project_data)) {
+  if (is.numeric(project_data[[var]])) {
+    # Histogram for numeric variables
+    p <- ggplot(project_data, aes(x = .data[[var]])) +
+      geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+      ggtitle(paste("Histogram of", var)) +
+      theme_minimal() +
+      xlab(var) +
+      ylab("Frequency")
+  } else {
+    # Bar plot for categorical variables
+    p <- ggplot(project_data, aes(x = .data[[var]])) +
+      geom_bar(fill = "skyblue", color = "black") +
+      ggtitle(paste("Bar Plot of", var)) +
+      theme_minimal() +
+      xlab(var) +
+      ylab("Count")
+  }
+  print(p)
+}
+
+
+```
+ 
+```{r}
+# Check for null values in each column
+#Data cleaning checking for null values 
+colSums(is.na(project_data))
+
+```
+we found that there are zero null values.
+```{r}
+#using Z_scores for checking the outliers 
+z_scores <- scale(project_data[sapply(project_data, is.numeric)])
+outliers <- abs(z_scores) > 3
+colSums(outliers)
+
+```
+There are outliers in the hours_studied , Tutoring_sessions and the Exam_score columns.
+
+```{r}
+#plots showing the outliers
+library(ggplot2)
+
+# Variables with outliers
+outlier_vars <- c("Hours_Studied", "Attendance", "Sleep_Hours", "Previous_Scores", 
+                  "Tutoring_Sessions", "Physical_Activity", "Exam_Score")
+
+# Create boxplots for variables with outliers
+for (var in outlier_vars) {
+  p <- ggplot(project_data, aes(y = .data[[var]])) +
+    geom_boxplot(fill = "lightblue") +
+    ggtitle(paste("Boxplot of", var)) +
+    theme_minimal() +
+    ylab(var)
+  print(p)
+}
+
+
+
+```
+
+```{r}
+#using Z_scores to remove the outliers 
+z_scores <- scale(project_data[sapply(project_data, is.numeric)])
+project_data <- project_data[apply(z_scores, 1, function(x) all(abs(x) <= 3)), ]
+
+```
+ 
+```{r}
+#plots to remove the outliers 
+library(ggplot2)
+
+# Create boxplots again for variables after outliers removal
+for (var in outlier_vars) {
+  p <- ggplot(project_data, aes(y = .data[[var]])) +
+    geom_boxplot(fill = "lightblue") +
+    ggtitle(paste("Boxplot of", var, "after removing outliers")) +
+    theme_minimal() +
+    ylab(var)
+  print(p)
+}
+
+```
+Still we can find the outliers in the particular columns like hours_studied , Tutoring_sessions and the Exam_score.
+```{r}
+#using IQR (INTER QUARTILE RANGE) to remove the outliers
+for (var in outlier_vars) {
+  Q1 <- quantile(project_data[[var]], 0.25)
+  Q3 <- quantile(project_data[[var]], 0.75)
+  IQR <- Q3 - Q1
+  project_data <- project_data[!(project_data[[var]] < (Q1 - 1.5 * IQR) | project_data[[var]] > (Q3 + 1.5 * IQR)), ]
+}
+
+```
+ 
+```{r}
+#plots to remove outliers
+library(ggplot2)
+
+# Create boxplots again for variables after outliers removal
+for (var in outlier_vars) {
+  p <- ggplot(project_data, aes(y = .data[[var]])) +
+    geom_boxplot(fill = "lightblue") +
+    ggtitle(paste("Boxplot of", var, "after removing outliers")) +
+    theme_minimal() +
+    ylab(var)
+  print(p)
+}
+
+```
+```{r}
+install.packages("corrplot")
+library(corrplot)
+
+```
+```{r}
+install.packages("corrplot", repos = "https://cran.r-project.org")
+
+```
+
+
+
+```{r}
+# Assuming 'project_data' is your data frame
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# 1. Univariate Analysis
+# Histogram of Exam_Score
+ggplot(project_data, aes(x = Exam_Score)) +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
+  labs(title = "Distribution of Exam Scores", x = "Exam Score", y = "Frequency")
+
+# Summary statistics for Hours_Studied
+summary(project_data$Hours_Studied)
+
+# Bar plot for Parental Education Level
+ggplot(project_data, aes(x = Parental_Education_Level)) +
+  geom_bar(fill = "salmon", color = "black") +
+  labs(title = "Parental Education Level Distribution", x = "Parental Education Level", y = "Frequency")
+
+# 2. Bivariate Analysis
+# Scatter plot of Exam_Score vs. Hours_Studied
+ggplot(project_data, aes(x = Hours_Studied, y = Exam_Score)) +
+  geom_point(color = "purple") +
+  labs(title = "Exam Score vs. Hours Studied", x = "Hours Studied", y = "Exam Score")
+
+# Box plot of Exam_Score by Gender
+ggplot(project_data, aes(x = Gender, y = Exam_Score)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Exam Score by Gender", x = "Gender", y = "Exam Score")
+
+# Correlation matrix for numerical features
+# Selecting numeric columns for correlation
+num_data <- project_data %>% select(Exam_Score, Hours_Studied, Attendance, Previous_Scores)
+cor_matrix <- cor(num_data, use = "complete.obs")
+
+# Display correlation matrix
+library(corrplot)
+corrplot::corrplot(cor_matrix, method = "color", addCoef.col = "black", tl.col = "black", title = "Correlation Matrix", mar = c(0, 0, 1, 0))
+
+```
+
+.This histogram shows the distribution of exam scores in the dataset. The majority of scores fall between 65 and 70, with fewer students scoring below 60 or above 75. This indicates that most students' performance is clustered around the average, with fewer outliers.
+.The picture shows a correlation matrix, which tells us how different factors relate to exam scores. "Attendance" and "Hours Studied" have a strong positive relationship with "Exam Score" (0.68 and 0.50, respectively), meaning students who attend more and study more tend to score higher. "Previous Scores" has a weaker relationship with "Exam Score" (0.20).
+.The boxplot shows exam scores by gender. Both female and male students have similar exam score ranges, with medians around 68-70. There doesn’t appear to be a big difference in exam scores between genders.
+.This scatter plot shows the relationship between hours studied and exam scores. Generally, as students study more hours, their exam scores tend to increase. The dots form an upward pattern, showing a positive link between studying time and exam performance.
+
+ 
+```{r}
+# Fit the linear regression model
+model <- lm(Exam_Score ~ ., data = project_data)
+
+# Summarize the model to see the significance of each factor
+summary(model)
+
+```
+ Coefficients:The estimate values shows how each variable impacts exam_score. For example: Hours_studied has a positive coefficient(0.298) indicating that more study hours are associated with a higher score.
+ Significance Levels: Most predictors are highly significant (indicated by *** in the Pr(>|t|) column), suggesting they meaningfully impact Exam_Score.
+Model Fit: The high R-squared (0.99) indicates that this model explains about 99% of the variance in Exam_Score, suggesting a strong fit.
+ 
