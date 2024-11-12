@@ -1,0 +1,35 @@
+---
+title: "Untitled"
+author: "Sirapu Nandini"
+date: "2024-11-11"
+output: html_document
+---
+
+```{r}
+
+library(ggplot2)
+
+# Including required temperatures 51, 53, and 55
+temperature_values <- c(51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 75, 80)
+
+# Model-estimated probabilities for these temperatures
+log_odds <- 11.6630 - 0.2162 * temperature_values
+probabilities <- 1 / (1 + exp(-log_odds))
+
+# Data frame for plotting
+data <- data.frame(Temperature = temperature_values, Probability = probabilities)
+
+# Plotting
+ggplot(data, aes(x = Temperature, y = Probability)) +
+  geom_point() +                    # Plot points for each temperature
+  geom_smooth(method = "loess") +    # Add a smooth curve
+  labs(title = "Model-Estimated Probabilities of O-ring Damage",
+       x = "Temperature (°F)",
+       y = "Estimated Probability of O-ring Damage") +
+  theme_minimal() +
+  geom_point(aes(x = 51, y = 0.651), color = "green", size = 3) +
+  geom_point(aes(x = 53, y = 0.553), color = "green", size = 3) +
+  geom_point(aes(x = 55, y = 0.443), color = "green", size = 3)
+
+```
+
